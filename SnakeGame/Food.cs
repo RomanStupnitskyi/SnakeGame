@@ -3,15 +3,10 @@ namespace SnakeGame;
 public class Food
 {
     public Position CurrentPosition { get; private set; }
-    private readonly Random _random = new();
+    private readonly Random _random = new Random();
 
-    public void Generate(int mapWidth, int mapHeight, Snake snake)
+    public void Generate(int mapWidth, int mapHeight, Snake p1, Snake p2)
     {
-        // POPRAWKA: Losujemy od 1 do (Max - 2).
-        // Np. jeśli szerokość to 40, ściany są na 0 i 39.
-        // Jedzenie może być na polach od 1 do 38.
-        // Random.Next(min, max) -> max jest wykluczony (exclusive), więc dajemy mapWidth - 1
-            
         const int safeMinX = 1;
         var safeMaxX = mapWidth - 1; 
         const int safeMinY = 1;
@@ -23,6 +18,12 @@ public class Food
             var y = _random.Next(safeMinY, safeMaxY);
             CurrentPosition = new Position(x, y);
         } 
-        while (snake.Body.Any(p => p.X == CurrentPosition.X && p.Y == CurrentPosition.Y));
+        // Sprawdzamy kolizję z P1 ORAZ P2
+        while (IsOnSnake(p1) || IsOnSnake(p2));
+    }
+
+    private bool IsOnSnake(Snake snake)
+    {
+        return snake.Body.Any(p => p.X == CurrentPosition.X && p.Y == CurrentPosition.Y);
     }
 }
