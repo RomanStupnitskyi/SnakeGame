@@ -20,6 +20,8 @@ public class Game
             
         _renderer.Setup(Width, Height);
         _food.Generate(Width, Height, _snake);
+        _food.Generate(Width, Height, _snake);
+        _renderer.DrawTotal(_snake, _food);
     }
 
     public void Run()
@@ -42,7 +44,7 @@ public class Game
         var nextPos = _snake.CalculateNextPosition();
 
         // Sprawdzenie kolizji ze ścianą
-        if (nextPos.X < 0 || nextPos.X >= Width || nextPos.Y < 0 || nextPos.Y >= Height)
+        if (nextPos.X <= 0 || nextPos.X >= Width - 1 || nextPos.Y <= 0 || nextPos.Y >= Height - 1)
         {
             _gameOver = true;
             return;
@@ -62,14 +64,14 @@ public class Game
             _score += 10;
             _food.Generate(Width, Height, _snake);
             // Przy wzroście nie usuwamy ogona, więc wystarczy narysować nową głowę
-            _renderer.Draw(_snake, _food);
+            _renderer.DrawStep(_snake, _food);
         }
         else
         {
             var tailToRemove = _snake.Body.Last(); // Zapamiętaj ogon przed ruchem
             _snake.Move(nextPos);
                 
-            _renderer.Draw(_snake, _food);
+            _renderer.DrawStep(_snake, _food);
             _renderer.ClearPoint(tailToRemove); // Usuń stary ogon z ekranu
         }
     }
